@@ -1,0 +1,8 @@
+﻿@using Wlash.Models
+@model IEnumerable<ArticleModel>
+
+@foreach (var item in Model)
+{
+    <h1>@item.Title</h1><br />
+    <h3>@item.Content</h3>
+}
