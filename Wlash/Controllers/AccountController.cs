@@ -24,6 +24,7 @@ namespace Wlash.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+
             return View();
         }
 
@@ -79,8 +80,9 @@ namespace Wlash.Controllers
                     return RedirectToAction("Index", "Home");
                 }
                 else
-                    ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                    ModelState.AddModelError("", "Not correct");
             }
+
             return View(model);
         }
 
@@ -101,7 +103,8 @@ namespace Wlash.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                return RedirectToAction("Login", "Account");
-            }
+
+            return RedirectToAction("Login", "Account");
+        }
     }
 }

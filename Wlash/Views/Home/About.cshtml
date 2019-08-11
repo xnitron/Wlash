@@ -2,6 +2,12 @@
     ViewData["Title"] = "About";
 }
 <h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
 
 <p>Use this area to provide additional information.</p>
+
+<form method="post">
+    <input type="text" name="Title" size="16" placeholder="Title"/><br />
+
+    <textarea rows="15" cols="78" name="Content" placeholder="Content"></textarea><br />
+    <button type="submit">Publish</button>
+</form>

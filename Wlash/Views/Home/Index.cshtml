@@ -1,5 +1,14 @@
-﻿@{
+﻿@using Wlash.Models
+@model IEnumerable<ArticleModel>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-    <h2>Hello world</h2>
+<h2>Hello world</h2>
+<div>
+    @foreach(var item in Model)
+    {
+        <h2>@item.Title</h2><br />
+        <p>@item.Content</p> 
+    }
+</div>

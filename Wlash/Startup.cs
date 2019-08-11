@@ -28,7 +28,10 @@ namespace Wlash
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
+            string connectionArticle = Configuration.GetConnectionString("DefaultConnectionArticle");
+
             services.AddDbContext<UserContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<ArticleContext>(options => options.UseSqlServer(connectionArticle));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
             {

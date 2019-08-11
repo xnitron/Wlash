@@ -11,36 +11,38 @@ namespace Wlash.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ArticleContext article;
+        private IEnumerable<ArticleModel> listArt;
 
-        [Authorize]
+        public HomeController(ArticleContext article)
+        {
+            this.article = article;
+            listArt = new List<ArticleModel>();
+        }
+
         public IActionResult Index()
         {
-            if(User.Identity.IsAuthenticated)
-            {
-                return Content("qwer");
-            }
-            return Content(User.Identity.Name);
+            listArt = article.Articles.ToList().Reverse<ArticleModel>(); 
+         
+            return View(listArt);
         }
 
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
-
             return View();
         }
 
-        public IActionResult Contact()
+        [HttpPost]
+        public async Task<IActionResult> About(ArticleModel art)
         {
-            ViewData["Message"] = "Your contact page.";
+            await article.AddAsync(art);
+            await article.SaveChangesAsync();
 
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
