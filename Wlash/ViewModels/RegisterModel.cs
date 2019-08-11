@@ -11,9 +11,6 @@ namespace Wlash.ViewModels
         [Required(ErrorMessage = "Email not specified")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Login not specified")]
-        public string Login { get; set; }
-
         [Required(ErrorMessage = "Password not specified")]
         [DataType(DataType.Password)]
         public string Password { get; set; }

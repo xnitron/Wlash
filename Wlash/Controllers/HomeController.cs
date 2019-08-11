@@ -22,6 +22,7 @@ namespace Wlash.Controllers
             return Content(User.Identity.Name);
         }
 
+        [Authorize(Roles = "admin")]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

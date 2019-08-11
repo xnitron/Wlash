@@ -15,7 +15,7 @@ namespace Wlash.Controllers
 {
     public class AccountController : Controller
     {
-        private UserContext db;
+        private readonly UserContext db;
         public AccountController(UserContext context)
         {
             db = context;
@@ -33,10 +33,12 @@ namespace Wlash.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserModel user = await db.Users.FirstOrDefaultAsync(u => u.Email == loginModel.Email && u.Password == loginModel.Password);
+                UserModel user = await db.Users
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Email == loginModel.Email && u.Password == loginModel.Password);
                 if (user != null)
                 {
-                    await Authenticate(loginModel.Email); // аутентификация
+                    await Authenticate(user); // аутентификация
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -51,6 +53,7 @@ namespace Wlash.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterModel model)
@@ -61,10 +64,17 @@ namespace Wlash.Controllers
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    db.Users.Add(new UserModel { Email = model.Email, Login = model.Login, Password = model.Password });
+                    user = new UserModel { Email = model.Email, Password = model.Password };
+
+                    RoleModel userRole = await db.Roles.FirstOrDefaultAsync(r => r.Name == "user");
+                    if (userRole != null)
+                        user.Role = userRole;
+
+                    db.Users.Add(user);
+
                     await db.SaveChangesAsync();
 
-                    await Authenticate(model.Email); // аутентификация
+                    await Authenticate(user); // аутентификация
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -74,12 +84,13 @@ namespace Wlash.Controllers
             return View(model);
         }
 
-        private async Task Authenticate(string userName)
+        private async Task Authenticate(UserModel userName)
         {
             // создаем один claim
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, userName.Email),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, userName.Role?.Name)
              };
             // создаем объект ClaimsIdentity
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
