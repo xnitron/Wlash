@@ -25,10 +25,10 @@ namespace Wlash.Controllers
             listArt = article.Articles.ToList().Reverse<ArticleModel>();
             listArt = listArt.Select(cont => {
                 cont.Content = cont.Content.Substring(0, 700) + " ...";
-                 
+
                 return cont;
             });
-
+            
             return View(listArt);
         }
 
@@ -40,7 +40,7 @@ namespace Wlash.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddArticle(ArticleModel art)
+        public async Task<IActionResult> About(ArticleModel art)
         {
             await article.AddAsync(art);
             await article.SaveChangesAsync();
